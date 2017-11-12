@@ -6,6 +6,7 @@ import os
 import tornado.ioloop
 import tornado.web
 from graphql_handler import GQLHandler
+from subscription_handler import GQLSubscriptionHandler
 from schema import schema
 
 
@@ -15,6 +16,7 @@ STATIC_PATH = os.path.join(PATH, 'static')
 
 SETTINGS = {
     'static_path': STATIC_PATH,
+    'sockets': []
 }
 
 
@@ -24,6 +26,21 @@ class GraphQLHandler(GQLHandler):
         return schema
 
 
+class GraphQLSubscriptionHandler(GQLSubscriptionHandler):
+
+    def initialize(self, opts):
+        super(GraphQLSubscriptionHandler, self).initialize()
+        self.opts = opts
+
+    @property
+    def schema(self):
+        return schema
+
+    @property
+    def sockets(self):
+        return self.opts['sockets']
+
+
 class GraphiQLHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(os.path.join(STATIC_PATH, 'graphiql.html'))
@@ -31,6 +48,7 @@ class GraphiQLHandler(tornado.web.RequestHandler):
 
 if __name__ == '__main__':
     app = tornado.web.Application([
+        (r'/subscriptions', GraphQLSubscriptionHandler, dict(opts=SETTINGS)),
         (r'/graphql', GraphQLHandler),
         (r'/graphiql', GraphiQLHandler)
     ], **SETTINGS)

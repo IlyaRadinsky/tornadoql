@@ -3,7 +3,12 @@
 from __future__ import absolute_import, division, print_function
 
 import graphene
-import uuid
+from rx import Observable
+
+
+class RandomType(graphene.ObjectType):
+    seconds = graphene.Int()
+    random_int = graphene.Int()
 
 
 class Message(graphene.ObjectType):
@@ -20,6 +25,7 @@ class PostMutation(graphene.Mutation):
     Output = Message
 
     def mutate(self, info, userId, msg):
+        import uuid
         msg = Message(
             id=str(uuid.uuid4()),
             userId=userId,
@@ -39,4 +45,14 @@ class Mutation(graphene.ObjectType):
     post = PostMutation.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+class Subscription(graphene.ObjectType):
+    random_int = graphene.Field(RandomType)
+
+    def resolve_random_int(root, info):
+        import random
+        return Observable.interval(1000)\
+                         .map(lambda i: RandomType(seconds=i, random_int=random.randint(0, 500)))
+
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
