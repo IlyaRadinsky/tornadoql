@@ -16,7 +16,8 @@ STATIC_PATH = os.path.join(PATH, 'static')
 
 SETTINGS = {
     'static_path': STATIC_PATH,
-    'sockets': []
+    'sockets': [],
+    'subscriptions': {}
 }
 
 
@@ -39,6 +40,14 @@ class GraphQLSubscriptionHandler(GQLSubscriptionHandler):
     @property
     def sockets(self):
         return self.opts['sockets']
+
+    @property
+    def subscriptions(self):
+        return self.opts['subscriptions'].get(self, {})
+
+    @subscriptions.setter
+    def subscriptions(self, subscriptions):
+        self.opts['subscriptions'][self] = subscriptions
 
 
 class GraphiQLHandler(tornado.web.RequestHandler):

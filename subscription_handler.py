@@ -55,6 +55,14 @@ class GQLSubscriptionHandler(websocket.WebSocketHandler):
     def sockets(self):
         raise NotImplementedError('sockets() must be implemented')
 
+    @property
+    def subscriptions(self):
+        raise NotImplementedError('subscriptions() must be implemented')
+
+    @subscriptions.setter
+    def subscriptions(self, subscriptions):
+        raise NotImplementedError('subscriptions() must be implemented')
+
     def select_subprotocol(self, subprotocols):
         return WS_PROTOCOL
 
@@ -114,10 +122,14 @@ class GQLSubscriptionHandler(websocket.WebSocketHandler):
     def open(self):
         app_log.info('open socket %s', self)
         self.sockets.append(self)
+        self.subscriptions = {}
 
     def on_close(self):
         app_log.info('close socket %s', self)
         self.sockets.remove(self)
+        for i in self.subscriptions:
+            self.subscriptions[i].dispose()
+        self.subscriptions = {}
 
     def on_message(self, message):
         parsed_message = json_decode(message)
@@ -162,15 +174,29 @@ class GQLSubscriptionHandler(websocket.WebSocketHandler):
             )
             assert isinstance(
                 execution_result, Observable), "A subscription must return an observable"
-            execution_result.subscribe(SubscriptionObserver(
+            subscription = execution_result.subscribe(SubscriptionObserver(
                     op_id,
                     self.send_execution_result,
                     self.send_error,
                     self.on_close
                 )
             )
+            self.subscribe(op_id, subscription)
         except Exception as e:
             self.send_error(op_id, str(e))
 
     def on_stop(self, op_id):
-        pass
+        self.unsubscribe(op_id)
+
+    def subscribe(self, op_id, subscription):
+        if op_id in self.subscriptions:
+            self.subscriptions[op_id].dispose()
+            del self.subscriptions[op_id]
+        self.subscriptions[op_id] = subscription
+        app_log.debug('subscriptions: %s', self.subscriptions)
+
+    def unsubscribe(self, op_id):
+        app_log.info('subscrption end: op_id=%s', op_id)
+        self.subscriptions = {n: s for n, s in self.subscriptions.items()
+                              if s != op_id}
+        app_log.debug('subscriptions: %s', self.subscriptions)
