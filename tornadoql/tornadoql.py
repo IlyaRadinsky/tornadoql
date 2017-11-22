@@ -3,17 +3,15 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import tornado.ioloop
-import tornado.web
-from graphql_handler import GQLHandler
-from subscription_handler import GQLSubscriptionHandler
-from schema import schema
 
+import tornado.web
+
+from tornadoql.graphql_handler import GQLHandler
+from tornadoql.subscription_handler import GQLSubscriptionHandler
 
 PORT = 8888
 PATH = os.path.dirname(__file__)
 STATIC_PATH = os.path.join(PATH, 'static')
-
 SETTINGS = {
     'static_path': STATIC_PATH,
     'sockets': [],
@@ -24,7 +22,7 @@ SETTINGS = {
 class GraphQLHandler(GQLHandler):
     @property
     def schema(self):
-        return schema
+        return TornadoQL.schema
 
 
 class GraphQLSubscriptionHandler(GQLSubscriptionHandler):
@@ -35,7 +33,7 @@ class GraphQLSubscriptionHandler(GQLSubscriptionHandler):
 
     @property
     def schema(self):
-        return schema
+        return TornadoQL.schema
 
     @property
     def sockets(self):
@@ -55,12 +53,20 @@ class GraphiQLHandler(tornado.web.RequestHandler):
         self.render(os.path.join(STATIC_PATH, 'graphiql.html'))
 
 
-if __name__ == '__main__':
-    app = tornado.web.Application([
+class TornadoQL(object):
+    schema = None
+    endpoints = [
         (r'/subscriptions', GraphQLSubscriptionHandler, dict(opts=SETTINGS)),
         (r'/graphql', GraphQLHandler),
         (r'/graphiql', GraphiQLHandler)
-    ], **SETTINGS)
-    print('GraphQL server starting on %s' % PORT)
-    app.listen(PORT)
-    tornado.ioloop.IOLoop.current().start()
+    ]
+
+    @staticmethod
+    def start(schema, app_endpoints=None):
+        if app_endpoints is None:
+            app_endpoints = TornadoQL.endpoints
+
+        TornadoQL.schema = schema
+        app = tornado.web.Application(app_endpoints, **SETTINGS)
+        app.listen(PORT)
+        tornado.ioloop.IOLoop.current().start()

@@ -6,11 +6,6 @@ import graphene
 from rx.subjects import Subject
 
 
-class RandomType(graphene.ObjectType):
-    seconds = graphene.Int()
-    random_int = graphene.Int()
-
-
 class Message(graphene.ObjectType):
     id = graphene.ID()
     userId = graphene.ID()
@@ -22,7 +17,6 @@ class Storage:
 
 
 class PostMutation(graphene.Mutation):
-
     class Arguments:
         userId = graphene.ID(required=True)
         msg = graphene.String(required=True)
@@ -41,27 +35,30 @@ class PostMutation(graphene.Mutation):
 
 
 class Query(graphene.ObjectType):
+    class Meta:
+        description = 'Example query for TornadoQL'
+
     hello = graphene.String()
 
     def resolve_hello(self, info):
-        return 'Hello from GraphQL!'
+        return 'Hello from TornadoQL!'
 
 
 class Mutation(graphene.ObjectType):
+    class Meta:
+        description = 'Example mutation for TornadoQL'
+
     post = PostMutation.Field()
 
 
 class Subscription(graphene.ObjectType):
-    randomInt = graphene.Field(RandomType)
-    onPost = graphene.Field(Message)
+    class Meta:
+        description = 'Example subscription for TornadoQL'
 
-    def resolve_randomInt(root, info):
-        import random
-        return Observable.interval(1000)\
-                         .map(lambda i: RandomType(seconds=i, random_int=random.randint(0, 500)))
+    onPost = graphene.Field(Message)
 
     def resolve_onPost(root, info):
         return Storage.stream
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
+DEFAULT_SCHEMA = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
