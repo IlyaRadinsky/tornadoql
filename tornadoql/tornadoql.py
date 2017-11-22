@@ -62,11 +62,11 @@ class TornadoQL(object):
     ]
 
     @staticmethod
-    def start(schema, app_endpoints=None):
+    def start(schema, app_endpoints=None, port=PORT, settings=SETTINGS):
         if app_endpoints is None:
             app_endpoints = TornadoQL.endpoints
 
         TornadoQL.schema = schema
-        app = tornado.web.Application(app_endpoints, **SETTINGS)
+        app = tornado.web.Application(app_endpoints, **settings)
         app.listen(PORT)
         tornado.ioloop.IOLoop.current().start()
