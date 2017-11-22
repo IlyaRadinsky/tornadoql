@@ -68,5 +68,5 @@ class TornadoQL(object):
 
         TornadoQL.schema = schema
         app = tornado.web.Application(app_endpoints, **settings)
-        app.listen(PORT)
+        app.listen(port)
         tornado.ioloop.IOLoop.current().start()
