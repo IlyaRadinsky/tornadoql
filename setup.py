@@ -21,5 +21,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.4'
     ],
-    install_requires=['tornado', 'graphene', 'rx']
+    install_requires=['tornado', 'graphene', 'rx'],
+    package_data={
+        'tornadoql': ['static/graphiql.html'],
+    }
 )
