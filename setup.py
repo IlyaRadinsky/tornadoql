@@ -8,7 +8,7 @@ setup(
     name='tornadoql',
     version='0.1.1',
     packages=['tornadoql'],
-    url='https://github.com/miketout/tornado-graphql-server',
+    url='https://github.com/IlyaRadinsky/tornadoql',
     license='MIT',
     keywords='graphql development web server api',
     author='Ilya Radinsky - Modifications by Michael Toutonghi',
