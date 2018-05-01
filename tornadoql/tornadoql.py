@@ -68,5 +68,7 @@ class TornadoQL(object):
 
         TornadoQL.schema = schema
         app = tornado.web.Application(app_endpoints, **settings)
+
+        print('Starting GraphQL server on ' + port)
         app.listen(port)
         tornado.ioloop.IOLoop.current().start()
