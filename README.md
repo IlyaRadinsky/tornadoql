@@ -15,10 +15,22 @@ A very easy to use, fully extensible Tornado Web Server Integration with Graphen
 With TornadoQL, exposing a graphene schema as a GraphQL API takes two imports and one line of code. You can also make that API part of a larger application by simply adding to the GraphQL endpoints and Tornado application settings before calling start. Getting your own API-only server up is as simple as defining a Graphene schema and the following code:
 
 ```python
+import graphene
 from tornadoql.tornadoql import TornadoQL
-from my_schema import my_schema
 
-TornadoQL.start(my_schema)
+class TestType(graphene.ObjectType):
+    id = graphene.ID()
+    value = graphene.String()
+
+class Query(graphene.ObjectType):
+    test = graphene.Field(TestType)
+
+    def resolve_test(self, info):
+        return TestType(id='1', value='test value')
+
+schema = graphene.Schema(query=Query)
+
+TornadoQL.start(schema)
 
 ```
 
