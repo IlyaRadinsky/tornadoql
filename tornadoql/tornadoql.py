@@ -70,5 +70,10 @@ class TornadoQL(object):
         app = tornado.web.Application(app_endpoints, **settings)
 
         print('Starting GraphQL server on %s' % port)
+        print()
+        print('  GraphiQL:              http://localhost:%s/graphiql' % port)
+        print('  Queries and Mutations: http://localhost:%s/graphql' % port)
+        print('  Subscriptions:         ws://localhost:%s/subscriptions' % port)
+        print()
         app.listen(port)
         tornado.ioloop.IOLoop.current().start()
