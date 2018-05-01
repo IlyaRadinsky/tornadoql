@@ -36,3 +36,11 @@ TornadoQL.start(schema)
 
 This will start a server with `/graphql`, `/graphiql`, and `/subscriptions` endpoints, supporting optional arguments for port and application settings. TornadoQL includes an extended version of graphiql GraphQL browser that supports subscriptions as well as queries and mutations.
 
+```
+Starting GraphQL server on 8888
+
+  GraphiQL:              http://localhost:8888/graphiql
+  Queries and Mutations: http://localhost:8888/graphql
+  Subscriptions:         ws://localhost:8888/subscriptions
+  
+```
