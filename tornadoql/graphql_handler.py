@@ -86,12 +86,11 @@ class GQLHandler(web.RequestHandler):
     def execute_graphql(self):
         graphql_req = self.graphql_request
         app_log.debug('graphql request: %s', graphql_req)
-        context_value = graphql_req.get('context', {})
         return self.schema.execute(
             graphql_req.get('query'),
             variable_values=graphql_req.get('variables'),
             operation_name=graphql_req.get('operationName'),
-            context_value=context_value,
+            context_value=self.context,
             middleware=self.middleware
         )
 
@@ -113,4 +112,4 @@ class GQLHandler(web.RequestHandler):
 
     @property
     def context(self):
-        return None
+        return {}
