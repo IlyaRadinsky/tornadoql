@@ -10,10 +10,8 @@ from tornadoql.graphql_handler import GQLHandler
 from tornadoql.subscription_handler import GQLSubscriptionHandler
 
 PORT = 8888
-PATH = os.path.dirname(__file__)
-STATIC_PATH = os.path.join(PATH, 'static')
+STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 SETTINGS = {
-    'static_path': STATIC_PATH,
     'sockets': [],
     'subscriptions': {}
 }
