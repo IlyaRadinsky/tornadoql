@@ -13,9 +13,9 @@ from graphql.error import format_error as format_graphql_error
 
 
 def error_status(exception):
-    if isinstance(exception, web.HTTPError):
+    if isinstance(exception, (ExecutionError, web.HTTPError)):
         return exception.status_code
-    elif isinstance(exception, (ExecutionError, GraphQLError)):
+    elif isinstance(exception, GraphQLError):
         return 400
     else:
         return 500
