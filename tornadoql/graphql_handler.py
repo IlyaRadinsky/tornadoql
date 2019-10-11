@@ -76,7 +76,7 @@ class GQLHandler(web.RequestHandler):
         app_log.debug('GraphQL result data: %s errors: %s invalid %s',
                       result.data, result.errors, result.invalid)
         if result and (result.errors or result.invalid):
-            codes = [ x.original_error.status_code for x in result.errors if isinstance(x.original_error, web.HTTPError) ]
+            codes = [ x.original_error.status_code for x in result.errors if hasattr(x, 'original_error') and isinstance(x.original_error, web.HTTPError) ]
             ex = ExecutionError(codes[0] if len(codes) == 1 else 400, errors=result.errors)
             app_log.warn('GraphQL Error: %s', ex)
             raise ex
