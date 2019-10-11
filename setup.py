@@ -6,7 +6,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='tornadoql',
-    version='0.2.0',
+    version='0.2.1',
     packages=['tornadoql'],
     url='https://github.com/IlyaRadinsky/tornadoql',
     license='MIT',
