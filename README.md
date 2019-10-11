@@ -5,7 +5,7 @@ Installation
 ```sh
 git clone https://github.com/IlyaRadinsky/tornadoql
 cd tornadoql
-python setup.py install
+python3 setup.py install
 ```
 
 Using
